@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+    
+    <h1> Are you sure you want to delete the expense: {{ target_expense.description }}</h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <button type="submit">Yes, delete</button>
+
+    </form>
+
+    <a href="{% url 'dashboard' %}">Cancel</a>
+
+
+</body>
+
+</html>

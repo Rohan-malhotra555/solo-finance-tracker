@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+
+    <h1>Finance Tracker Dashboard</h1>
+
+    <a href="{% url 'dashboard' %}">All</a>
+
+    {% for category in categories %}
+        <a href="{% url 'dashboard' %}?category={{ category.name }}">{{ category.name }}</a>
+
+    {% endfor %}
+
+    <form action="{% url 'logout' %}" method="POST">
+
+        {% csrf_token %}
+
+        <button type="submit">Logout</button>
+
+    </form>
+
+    <h3> Total amount spent: {{ total_amount }}</h3>
+
+    <ul>
+        {% for expense in all_expenses %}
+            <li>{{ expense.description }} ({{ expense.amount }})
+                ({{ expense.category.name }}) ({{ expense.date }}) 
+                <!-- the expense.id is the parameter we give so that 
+                 django can create the dynamic url easily. -->
+                <a href="{% url 'edit_expense' expense.id %}">Edit</a>
+                <a href="{% url 'delete_expense' expense.id %}">Delete</a>
+            </li>
+        {% empty %}
+            <li>No expense added yet.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+
+</html>

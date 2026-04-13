@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+
+    <h1>Add an Expense</h1>
+
+    <form method="POST">
+
+        <!-- token that is sent to the page and comes back with the POST data, to prevent CSRF attack. -->
+        {% csrf_token %}
+
+        <!-- display each field as a paragraph on the page -->
+        {{ form.as_p }} 
+
+        <button type="submit">Add Expense</button>
+
+    </form>
+
+    <!-- url is created by the 'dashboard' name, so later we only need to change in the urls.py, not here, if any changes -->
+    <a href="{% url 'dashboard' %}">Cancel</a>
+
+
+</body>
+</html>

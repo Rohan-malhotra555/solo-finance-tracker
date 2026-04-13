@@ -120,3 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# Since we are using CBVs for authentication, we can't change the redirect
+# in the view. Instead, we write it here in settings.py, as follows.
+LOGIN_REDIRECT_URL = 'dashboard' # goes to the dashboard url after successful login.
+LOGOUT_REDIRECT_URL = 'login' # goes to the login page after logging out.
