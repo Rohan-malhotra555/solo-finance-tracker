@@ -1,5 +1,7 @@
 from django import forms
 from .models import Expense
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 
 
 # forms → Django forms module
@@ -22,4 +24,16 @@ class ExpenseForm(forms.ModelForm): # This class line is mainly for inheriting f
 
         }
 
-        
+
+class RegisterForm(UserCreationForm):
+
+    # UserCreationForm.Meta: This means, inheriting the Meta class from UCF.
+    # This means:
+    # You keep all default settings (like fields, validation behavior, etc.)
+    # You can override only what you need
+    # So basically, WE ARE JUST REPLACING THE USER MODEL, REST EVERYTHING IS SAME.
+    class Meta(UserCreationForm.Meta):
+
+        model = get_user_model()
+        # We inherit the default fields (username, password 1, password 2)
+        fields = UserCreationForm.Meta.fields

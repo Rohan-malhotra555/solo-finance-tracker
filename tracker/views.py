@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
 from .models import Expense, Category
-from .forms import ExpenseForm
+from .forms import ExpenseForm, RegisterForm
+# from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+
+
 
 # Create your views here.
 
@@ -16,6 +20,7 @@ from .forms import ExpenseForm
 # This is the dashboard view. When a user first searches this websites name, e.g.
 # finance-tracker.com, the tracker/urls.py file will fetch this view.
 # This is the READ part of CRUD
+
 def dashboard(request):
 
     # order_by('created_at') → 2020, 2022, 2024 (ascending) (oldest first) (small to big)
@@ -154,3 +159,40 @@ def delete_expense(request, expense_id):
 # ------------------------------------
 
 
+
+# New user REGISTRATION VIEW
+
+def register(request):
+
+    if request.method == 'POST':
+
+        # We can't directly use this UserCreationForm. Reason being, this built-in
+        # form talks and saves only to the default user model. But we are using 
+        # our own model. So, we need to make a new form inheriting from this form
+        # and then save the new user, which will be saved to our custom user model.
+        # form = UserCreationForm(request.POST) (can't be used with custom user.)
+
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+
+            user = form.save()
+
+            login(request, user)
+
+            return redirect('dashboard')
+    
+    else:
+
+        # form = UserCreationForm()
+
+        form = RegisterForm()
+    
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'tracker/register.html', context)
+        
+        
+        
