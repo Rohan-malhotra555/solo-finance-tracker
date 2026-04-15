@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 
 # forms → Django forms module
 # ModelForm → a class that automatically builds a form from a database model
+# form to add new expense.
 class ExpenseForm(forms.ModelForm): # This class line is mainly for inheriting from the .ModelForm class.
 
     # Meta → settings for how it behaves, basically the configuration for how it behaves.
@@ -24,7 +25,7 @@ class ExpenseForm(forms.ModelForm): # This class line is mainly for inheriting f
 
         }
 
-
+# Form for new user registration
 class RegisterForm(UserCreationForm):
 
     # UserCreationForm.Meta: This means, inheriting the Meta class from UCF.
@@ -37,3 +38,14 @@ class RegisterForm(UserCreationForm):
         model = get_user_model()
         # We inherit the default fields (username, password 1, password 2)
         fields = UserCreationForm.Meta.fields
+
+
+# Form to update/edit the user profile.
+class ProfileUpdateForm(forms.ModelForm):
+
+    class Meta:
+
+        model = get_user_model()
+
+        fields = ['username', 'first_name', 'last_name', 'bio', 'profile_picture']
+

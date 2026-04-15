@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,3 +25,12 @@ urlpatterns = [
     # '' means everything
     path('', include('tracker.urls'))
 ]
+
+
+# If we are developing locally on our machine (DEBUG = True)
+if settings.DEBUG:
+
+    # Tell the switchboard to route MEDIA_URL requests to the physical MEDIA_ROOT folder
+    # Literally tells, if the url begins with media url that is '/media/',
+    # then go to the MEDIA_ROOT, GRAB THE FILE AND SERVE IT.
+    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

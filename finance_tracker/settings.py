@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -121,8 +122,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# The URL path the browser will use to request the image
+# Whenever an html file creates a url for an image, it gets prefixed with this.
+MEDIA_URL = '/media/'
+
+# The physical folder on the machine where Django will save the uploaded files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Since we are using CBVs for authentication, we can't change the redirect
 # in the view. Instead, we write it here in settings.py, as follows.
 LOGIN_REDIRECT_URL = 'dashboard' # goes to the dashboard url after successful login.
 LOGOUT_REDIRECT_URL = 'login' # goes to the login page after logging out.
+LOGIN_URL = 'login' # Tells the @login_required decorator where to send unauthorized users.

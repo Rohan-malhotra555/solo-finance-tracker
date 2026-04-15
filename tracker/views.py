@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
 from .models import Expense, Category
-from .forms import ExpenseForm, RegisterForm
+from .forms import ExpenseForm, RegisterForm, ProfileUpdateForm
 # from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -21,6 +22,7 @@ from django.contrib.auth import login
 # finance-tracker.com, the tracker/urls.py file will fetch this view.
 # This is the READ part of CRUD
 
+@login_required
 def dashboard(request):
 
     # order_by('created_at') → 2020, 2022, 2024 (ascending) (oldest first) (small to big)
@@ -32,15 +34,21 @@ def dashboard(request):
 
     categories = Category.objects.filter(created_by = request.user)
 
+    # request.GET --> dictionary of all the key value pair in the query string in URL
+    # we can do request.GET['<key_name>'], but if no query string in url, gives error
+    # i.e. why we use .get, safely returns None if no query string in url. Basically, no /?=.... in url.
     category_filter = request.GET.get('category')
 
     if category_filter:
         
         # narrowing down the expenses based on the category.
+        # category__name means go to category field, as foreign key, takes to 
+        # category object and then it's name field.
         all_expenses = all_expenses.filter(category__name = category_filter)
 
     # END OF FILTERING LOGIC
 
+    # .aggregate is the actual doer, while Sum is like the name of the task.
     amount_data = all_expenses.aggregate(total = Sum('amount'))
 
     # we can also write amount_data['total] or 0, in order to check if the returned value
@@ -65,6 +73,8 @@ def dashboard(request):
 # This view is used to handle the ExpenseForm and display to the user, the form 
 # when they try to add a new expense
 # This is the CREATE part of CRUD.
+
+@login_required
 def add_expense(request):
 
     # Checking if the method is POST in the form.
@@ -97,12 +107,14 @@ def add_expense(request):
 
 
 # This is the UPDATE part of CRUD
+
+@login_required
 def edit_expense(request, expense_id):
 
     # 1. Fetch the exact expense safely. If a user types a random ID in the URL, throw a 404 Not Found.
     # Security check: we also filter by user=request.user so user A can't edit User B's expense!
     # The user is checked to prevent IDOR vulnerability, where a user can manually change the id in the url and access 
-    # unauthorized data. So, basically, first fetching by id and then checking the user.
+    # unauthorized data. So, basically, first fetching by id and then checking if that id's user is this request.user
     target_expense = get_object_or_404(Expense, id=expense_id, user=request.user)
 
     if request.method == 'POST':
@@ -132,6 +144,7 @@ def edit_expense(request, expense_id):
 
 
 # This is the DELETE part of CRUD
+@login_required
 def delete_expense(request, expense_id):
 
     target_expense = get_object_or_404(Expense, id=expense_id, user=request.user)
@@ -195,4 +208,35 @@ def register(request):
     return render(request, 'tracker/register.html', context)
         
         
+# View to updat/edit the user profile.
+@login_required
+def edit_profile(request):
+
+    if request.method == 'POST':
+
+        # we give request.POST as it is the dictionary storing the text data entered by the user.
+        # but the image data is stored by django in request.FILES, so we pass it along with the .POST data
+        # also, the instance we get from the current user object in the db.
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect('dashboard')
+        
+
+    else:
+
+        form = ProfileUpdateForm(instance=request.user)
+
+    context = {
+
+        'form': form
+    }
+
+    return render(request, 'tracker/edit_profile.html', context)
+
+
         

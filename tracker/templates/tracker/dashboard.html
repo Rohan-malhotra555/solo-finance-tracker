@@ -6,6 +6,28 @@
 
     <h1>Finance Tracker Dashboard</h1>
 
+    <div>
+
+        <h2> Hello, {{ user.first_name|default:user.username }}! </h2>
+
+        {% if user.bio %}
+
+            <p><strong>Bio:</strong>{{ user.bio }}</p>
+
+        {% endif %}
+
+        {% if user.profile_picture %}
+
+            <img src="{{ user.profile_picture.url }}" width="150" alt="Profile Picture">
+
+        {% else %}
+
+            <p><em>No profile picture uploaded yet.</em></p>
+
+        {% endif %}    
+    </div>
+    <hr>
+
     <a href="{% url 'dashboard' %}">All</a>
 
     {% for category in categories %}
@@ -20,6 +42,14 @@
         <button type="submit">Logout</button>
 
     </form>
+
+    <a href="{% url 'add_expense' %}">Add an expense</a>
+
+
+
+    <a href="{% url 'edit_profile' %}">Edit Profile</a>
+
+
 
     <h3> Total amount spent: {{ total_amount }}</h3>
 

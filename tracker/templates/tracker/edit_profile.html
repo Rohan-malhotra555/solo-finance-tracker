@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+    <body>
+        
+        <!-- This tells the browser: "Warning. I am attaching a heavy 
+        binary payload. Break this data into multiple parts (text parts 
+        and file parts) and send them securely." -->
+        <form method="POST" enctype="multipart/form-data">
+            
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">Save</button>
+
+        </form>
+
+        <a href="{% url 'dashboard' %}">Cancel</a>
+
+
+
+    </body>
+</html>

@@ -10,6 +10,11 @@ class TrackerUser(AbstractUser):
     # We can either define any new field we want (AbstractUser itself gives
     # username, firstname, lastname, password and email field) else we give 'pass'.
 
+    bio = models.TextField(blank=True, null=True)
+    
+    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+    
+
     def __str__(self):
         return self.username
     
@@ -26,7 +31,7 @@ class Category(models.Model):
 
 class Expense(models.Model):
 
-    # Decimal field is used as Float causes decimal pointer issues while doing math.
+    # Decimal field is used because Float causes decimal pointer issues while doing math.
     amount = models.DecimalField(max_digits=10, decimal_places=2) 
 
     description = models.CharField(max_length=255)
