@@ -10,6 +10,10 @@ class TrackerUser(AbstractUser):
     # We can either define any new field we want (AbstractUser itself gives
     # username, firstname, lastname, password and email field) else we give 'pass'.
 
+    # On creating these two new fields, we should have encountered an error.
+    # because, the initial users didn't have these fields but since we made
+    # these null = true, this allowed dj to store Null values in the records of initial users.
+    # otherwise, we had to provide some default values.
     bio = models.TextField(blank=True, null=True)
     
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)

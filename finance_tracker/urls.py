@@ -29,7 +29,7 @@ urlpatterns = [
 
 # If we are developing locally on our machine (DEBUG = True)
 if settings.DEBUG:
-
+    # important because urls.py caters only to dj views, so we need to make work as a file server to the browser.
     # Tell the switchboard to route MEDIA_URL requests to the physical MEDIA_ROOT folder
     # Literally tells, if the url begins with media url that is '/media/',
     # then go to the MEDIA_ROOT, GRAB THE FILE AND SERVE IT.

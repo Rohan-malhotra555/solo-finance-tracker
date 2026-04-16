@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker</title>
+
+    <!--
+    We are not installing Tailwind locally. Instead, we use the Tailwind CDN script.
+
+    When the user visits the site, their browser downloads this script from a fast CDN.
+    The script then generates Tailwind CSS styles dynamically in the browser based on the HTML.
+
+    This approach is convenient for development and quick demos, but not recommended for production,
+    where Tailwind is usually precompiled for better performance. Bigger projects with many users basically.
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+
+    <nav class="bg-orange-600 p-4 text-white shadow-md flex justify-between items-center">
+        <a href="{% url 'dashboard' %}" class="text-xl font-bold tracking-wider">FinanceTracker</a>
+        
+        <div class="flex items-center space-x-4">
+            {% if user.is_authenticated %}
+                <span class="font-medium">Hello, {{ user.username }}</span>
+                <a href="{% url 'edit_profile' %}" class="hover:text-blue-200 transition">Profile</a>
+                
+                <form action="{% url 'logout' %}" method="POST" class="inline m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="hover:text-blue-200 transition">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="hover:text-blue-200 transition">Login</a>
+                <a href="{% url 'register' %}" class="bg-white text-blue-600 px-3 py-1 rounded font-bold hover:bg-gray-100 transition">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- each file's content goes here, in the block content block. -->
+    <main class="container mx-auto max-w-4xl p-6 mt-8 bg-white shadow-lg rounded-lg">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

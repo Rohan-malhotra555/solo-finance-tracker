@@ -1,26 +1,38 @@
-<!DOCTYPE html>
 
-<html>
+{% extends 'tracker/base.html' %}
 
-<body>
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow border border-gray-200 mt-10">
+    
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+        {% if form.instance.id %}
+            Edit Expense
+        {% else %}
+            Add an Expense
+        {% endif %}
+    </h2>
 
-    <h1>Add an Expense</h1>
-
-    <form method="POST">
+    <form method="POST" class="space-y-4">
 
         <!-- token that is sent to the page and comes back with the POST data, to prevent CSRF attack. -->
         {% csrf_token %}
+        
+        <div class="text-gray-700 font-medium">
 
-        <!-- display each field as a paragraph on the page -->
-        {{ form.as_p }} 
+            <!-- display each field as a paragraph on the page -->
+            {{ form.as_p }}
+        </div>
+        
+        <div class="pt-4 flex justify-between items-center">
 
-        <button type="submit">Add Expense</button>
-
+            <!-- url is created by the 'dashboard' name, so later we only need to change in the urls.py, not here, if any changes -->
+            <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-gray-800 font-medium">Cancel</a>
+            
+            <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded shadow transition duration-200">
+                Save Expense
+            </button>
+        </div>
     </form>
 
-    <!-- url is created by the 'dashboard' name, so later we only need to change in the urls.py, not here, if any changes -->
-    <a href="{% url 'dashboard' %}">Cancel</a>
-
-
-</body>
-</html>
+</div>
+{% endblock %}

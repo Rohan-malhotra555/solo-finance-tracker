@@ -120,9 +120,25 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+# The URL path prefix that browser will use to request the static files.
+# Whenever an html file creates a url for a static file, it gets prefixed with this.
 STATIC_URL = 'static/'
 
-# The URL path the browser will use to request the image
+# Your Drafting Desk: Where Django looks for custom static files 
+# during local development
+STATICFILES_DIRS = [
+
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# The Locked Briefcase: Where Django will collect everything when we go live
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+
+
+
+# The URL path prefix that browser will use to request the image
 # Whenever an html file creates a url for an image, it gets prefixed with this.
 MEDIA_URL = '/media/'
 

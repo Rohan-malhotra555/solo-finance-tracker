@@ -1,72 +1,79 @@
-<!DOCTYPE html>
 
-<html>
+{% extends 'tracker/base.html' %}
 
-<body>
-
-    <h1>Finance Tracker Dashboard</h1>
-
-    <div>
-
-        <h2> Hello, {{ user.first_name|default:user.username }}! </h2>
-
-        {% if user.bio %}
-
-            <p><strong>Bio:</strong>{{ user.bio }}</p>
-
-        {% endif %}
-
-        {% if user.profile_picture %}
-
-            <img src="{{ user.profile_picture.url }}" width="150" alt="Profile Picture">
-
-        {% else %}
-
-            <p><em>No profile picture uploaded yet.</em></p>
-
-        {% endif %}    
+{% block content %}
+<div class="space-y-8"> <div class="flex flex-col md:flex-row md:items-center justify-between border-b pb-4">
+        <div class="flex items-center space-x-4">
+            
+            <!-- checking if profile pic exists for users, as users can skip adding it while creating profile. -->
+            {% if user.profile_picture %}
+                <!-- passing only user.profile_picture will return the name from the db, 
+                like pic.jpg, that is why we have to enter user.profile_pictuer.url, this
+                .url prefixes /media/ to the name of the file, thus creating a valid url -->
+                <img src="{{ user.profile_picture.url }}" class="w-16 h-16 rounded-full object-cover shadow-sm" alt="Profile Picture">
+            {% else %}
+                <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 shadow-sm">No Pic</div>
+            {% endif %}
+            
+            <div>
+                <!-- user object is always automatically passed into dj templates -->
+                <h1 class="text-3xl font-bold text-gray-800">{{ user.first_name|default:user.username }}</h1>
+                {% if user.bio %}
+                    <p class="text-sm text-gray-600 mt-1">{{ user.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-4 md:mt-0">
+            <a href="{% url 'edit_profile' %}" class="text-sm font-semibold text-orange-600 hover:text-orange-800 hover:underline">Edit Profile</a>
+        </div>
     </div>
-    <hr>
 
-    <a href="{% url 'dashboard' %}">All</a>
+    <div class="flex flex-col md:flex-row justify-between items-center bg-orange-50 p-6 rounded-lg border border-orange-100 shadow-sm">
+        <h3 class="text-2xl font-bold text-orange-800">Total Spent: {{ total_amount }}</h3>
+        
+        <a href="{% url 'add_expense' %}" class="mt-4 md:mt-0 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded shadow transition duration-200">
+            + Add Expense
+        </a>
+    </div>
 
-    {% for category in categories %}
-        <a href="{% url 'dashboard' %}?category={{ category.name }}">{{ category.name }}</a>
-
-    {% endfor %}
-
-    <form action="{% url 'logout' %}" method="POST">
-
-        {% csrf_token %}
-
-        <button type="submit">Logout</button>
-
-    </form>
-
-    <a href="{% url 'add_expense' %}">Add an expense</a>
-
-
-
-    <a href="{% url 'edit_profile' %}">Edit Profile</a>
-
-
-
-    <h3> Total amount spent: {{ total_amount }}</h3>
-
-    <ul>
-        {% for expense in all_expenses %}
-            <li>{{ expense.description }} ({{ expense.amount }})
-                ({{ expense.category.name }}) ({{ expense.date }}) 
-                <!-- the expense.id is the parameter we give so that 
-                 django can create the dynamic url easily. -->
-                <a href="{% url 'edit_expense' expense.id %}">Edit</a>
-                <a href="{% url 'delete_expense' expense.id %}">Delete</a>
-            </li>
-        {% empty %}
-            <li>No expense added yet.</li>
+    <div class="flex items-center space-x-2 overflow-x-auto py-2">
+        <span class="font-semibold text-gray-700">Filters:</span>
+        <a href="{% url 'dashboard' %}" class="px-4 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full text-sm font-medium transition">All</a>
+        
+        {% for category in categories %}
+            <a href="{% url 'dashboard' %}?category={{ category.name }}" class="px-4 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-full text-sm font-medium transition">{{ category.name }}</a>
         {% endfor %}
-    </ul>
+    </div>
 
-</body>
+    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+        <ul class="divide-y divide-gray-200">
+            {% for expense in all_expenses %}
+                <li class="p-5 hover:bg-gray-50 flex justify-between items-center transition">
+                    <div>
+                        <p class="text-lg font-bold text-gray-800">{{ expense.description }}</p>
+                        <p class="text-sm text-gray-500 mt-1">
+                            {{ expense.date }} &bull; 
+                            <span class="bg-orange-100 text-orange-800 px-2 py-0.5 rounded text-xs font-bold tracking-wide uppercase">{{ expense.category.name }}</span>
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <span class="text-xl font-bold text-gray-900">{{ expense.amount }}</span>
+                        <div class="flex flex-col space-y-2 text-sm font-medium border-l pl-4 border-gray-200">
+                            
+                            <!-- the expense.id is the parameter we give so that 
+                            django can create the dynamic url easily. -->
+                            <a href="{% url 'edit_expense' expense.id %}" class="text-blue-600 hover:text-blue-800">Edit</a>
+                            <a href="{% url 'delete_expense' expense.id %}" class="text-red-600 hover:text-red-800">Delete</a>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="p-8 text-center text-gray-500">No expenses found. Time to add your first transaction!</li>
+            {% endfor %}
+        </ul>
+    </div>
 
-</html>
+</div>
+{% endblock %}

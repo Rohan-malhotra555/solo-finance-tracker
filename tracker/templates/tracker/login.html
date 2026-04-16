@@ -1,23 +1,35 @@
-<!DOCTYPE html>
+{% extends 'tracker/base.html' %}
 
-<html>
-<body>
-    
-    <h1>Login</h1>
 
-    <form method="POST">
+<!-- The standard input tags work, even when we didn't use the standard form we created. Then
+ also, we will get the same benefits of checking and everything because all dj cares is the 
+ names of the fields, username and password. It doesn't care if the form rendered the fields
+ or we did manually in the html file. Also, we didn't require much control over the fields
+ like using error messages, that's why, using standard input tag fields was good choice here. -->
 
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow border border-gray-200 mt-10">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Login</h2>
+
+    <form method="POST" class="space-y-4">
         {% csrf_token %}
+        
+        <div>
+            <label class="block text-gray-700 font-medium">Username</label>
+            <input type="text" name="username" class="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-orange-500 focus:border-orange-500" required>
+        </div>
 
-        {{ form.as_p }}
+        <div>
+            <label class="block text-gray-700 font-medium">Password</label>
+            <input type="password" name="password" class="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-orange-500 focus:border-orange-500" required>
+        </div>
 
-        <button type="submit">Login</button>
-
+        <div class="pt-4 flex flex-col space-y-4">
+            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded shadow transition">Login</button>
+            <div class="text-center text-sm">
+                <span class="text-gray-600">Don't have an account? <a href="{% url 'register' %}" class="text-orange-600 hover:underline font-semibold">Register here!</a></span>
+            </div>
+        </div>
     </form>
-
-    <a href="{% url 'dashboard' %}">Cancel</a>
-
-
-
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,25 +1,49 @@
-<!DOCTYPE html>
+{% extends 'tracker/base.html' %}
 
-<html>
-<body>
-    
-    <h1>Register</h1>
 
-    <form method="POST">
+<!-- we used normal input tags for login.html but not here in register.html, the main 
+reason is that while registering, we need to tell the user, why some of their inputs are invalid
+, if there are any. Though in login, we can show the generic invalid name, password message.
+To have control over the error message, we need to use forms and that is why we didn't use
+standard input tag fields here. -->
 
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow border border-gray-200 mt-10">
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Create an Account</h2>
+
+    <form method="POST" class="space-y-4">
         {% csrf_token %}
+        
 
-        {{ form.as_p }}
-
-        <button type="submit">Create Account</button>
-
+        <!-- we are not using as_p here, because we want control over each element in the form.
+        we want to style each thing, except field, which got styled by python in the form itself
+        so remember, Use as_p when you are just testing logic and don't care how it looks. Use the
+        for loop when you are building a professional UI for actual users (exactly like you just did
+        for this page!). -->
+        {% for field in form %}
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">{{ field.label }}</label>
+                
+                <!-- we didn't style the field, i.e. the input tag field here, because python did that in the form, the __init__ part.-->
+                {{ field }}
+                
+                {% if field.help_text %}
+                    <p class="text-xs text-gray-500 mt-1">{{ field.help_text|safe }}</p>
+                {% endif %}
+                
+                {% for error in field.errors %}
+                    <p class="text-xs text-red-500 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+        <div class="pt-4 flex flex-col space-y-4">
+            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded shadow transition">Register</button>
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600">Already have an account? <a href="{% url 'login' %}" class="text-orange-600 font-semibold hover:underline">Login here!</a></span>
+                <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-gray-800 font-medium">Cancel</a>
+            </div>
+        </div>
     </form>
-
-    Already have an account? <a href="{% url 'login' %}">Login here!</a>
-
-    <a href="{% url 'dashboard' %}">Cancel</a>
-
-
-
-</body>
-</html>
+</div>
+{% endblock %}
