@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv   # this is imported to get load_dotenv method in our settings.
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,11 +21,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+# This method wakes up the dotenv robot which then, Loads the environment variables
+# from the .env file and pastes them in the OS's Environment of this project. 
+# Environment is a temporary memory given to each process by the OS where we can store
+# data in the form of environment variables.
+load_dotenv()
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x07)9hhnw))37)#gzw=&u#vwe%clu=*xuc&+cxr95(&ouw=n@d'
+# os is the python's built in library that helps it to talk to the underlying OS.
+# environ is the dictionary representing the Environment's sticky notes, i.e., the variables and their values.
+# .get(), we know already, safely returns the value of the key asked in ().
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# The OS always speaks in strings, no numbers and boolean values. So, it returns, say True
+# but in string form. So, it returns "True". But DJ needs a strict bool here. So, the 
+# problem is that even if OS return "False", since it's a NON-EMPTY STRING, it is
+# evaluated by DJ as True, and hence, DEBUG will always be True, leading to a massive threat.
+# that's why we check through a conditional statement, that is bound to return a bool value.
+# If returned value is "True", we will get True, else no matter what, even if empty, we 
+# will get False
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 ALLOWED_HOSTS = []
 
