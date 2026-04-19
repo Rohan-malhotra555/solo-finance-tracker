@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv   # this is imported to get load_dotenv method in our settings.
+import dj_database_url           # this is required to check the OS's environment for DATABASE_URL, following which it connects to Postgresql db. 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # This method wakes up the dotenv robot which then, Loads the environment variables
 # from the .env file and pastes them in the OS's Environment of this project. 
 # Environment is a temporary memory given to each process by the OS where we can store
-# data in the form of environment variables.
+# data in the form of environment variables, securely.
 load_dotenv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -43,7 +44,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # will get False
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
+# The VIP List. The dot means "allow any subdomain on render.com"
+# Django acts as a Bouncer at the front door. If DEBUG = False 
+# (which it will be on Render), Django looks at the URL the user typed in. 
+# If that URL is not on the VIP list in ALLOWED_HOSTS, Django instantly 
+# blocks the connection with a "400 Bad Request" error.
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 
 # Add this anywhere in settings.py to override the default user:
 # Format is 'app_name.ModelName'
@@ -58,12 +64,18 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # cloudinary storage (or django_cloudinary_storage) is used to make a 
+    # setup in and tell django such that all of the media files will now go into cloudinary. 
+    'cloudinary_storage', # the order matters
     'django.contrib.staticfiles',
+    # cloudinary is the actual doer. It performs the uploads, transformations....
+    'cloudinary',
     'tracker',   # first created app in this project, so important to register here.
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # Checks if the request is for a static file, hands it over here itself.
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -92,15 +104,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'finance_tracker.wsgi.application'
 
 
+
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+# Initially and in local development mode, DJ will consider the default database and in the 
+# start, it will initialize this only, i.e., db.sqlite3
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation
@@ -131,7 +149,7 @@ TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = True # converts the time zone to UTZ for saving, but displays to use in our custom time zone.
 
 
 # Static files (CSS, JavaScript, Images)
@@ -155,6 +173,46 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 
+
+# This line enables features that help to enrich the files that whitenoise serves.
+# This is a very useful thing. It does three things:
+# 1. Compression: Before it sends the files as per request, it zips them, reducing the size by 80%.
+# 2. Caching: It send a note(header) back to browser saying, cache this file for this much period and
+# don't ask for it again till this time.
+# 3. Manifest: Since the browser won't ask for the file due to caching, what if 
+# the dev changes the code. Thus, Manifest names the files by particular names according to the code.
+# if the content changes, its hash changes and hence, browser is forced to request and download the new file.
+
+
+# django 4.2 and older version format
+# STATICFILE_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# This tells django to route all the media uploads on this website to Cloudinary.
+# Also, the use of cloudinary_storage can be seen below.
+
+# django 4.2 and older version format
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# The Modern Django 4.2+ Storage Dictionary
+STORAGES = {
+    # This handles your CSS/JS (The WhiteNoise Assistant)
+    "staticfiles": {
+
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    
+    },
+    # This handles user uploads (The Cloudinary Warehouse)
+    "default": {
+    
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    
+    },
+}
+
+
+
+
 # The URL path prefix that browser will use to request the image
 # Whenever an html file creates a url for an image, it gets prefixed with this.
 MEDIA_URL = '/media/'
@@ -168,3 +226,138 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = 'dashboard' # goes to the dashboard url after successful login.
 LOGOUT_REDIRECT_URL = 'login' # goes to the login page after logging out.
 LOGIN_URL = 'login' # Tells the @login_required decorator where to send unauthorized users.
+
+
+
+# ------------------------------------------------------------------------
+
+# FIRSTLY WE DID THIS FOR DATABASE LOGIC AND THE STORAGE LOGIC.
+
+# ------------------------------------------------------------------------
+
+
+# After the default is set up, dj_database_url will constantly check the OS's environment variables
+# (which will be the linux OS on render's machine) for DATABASE_URL (.config() does this, the search for 
+# DATABASE_URL). Once found, it will first convert the link to the desired dictionary format, as required
+# by DJ, the five key format, (engine, dbname, username, password and HOST url). And then, it 
+# will store it in the db_from_env variable. 
+# (conn_max_age=600 means if the connection is setup, means link is found, set the connection ON for 10 minutes).
+
+# MAIN LINE
+# db_from_env = dj_database_url.config(conn_max_age=600)
+
+
+
+# if db_from_env will be present, i.e. found, in that case, the defualt key will be updated 
+# in the DATABASES dictionary with the entire massive newly fetched db_from_env and DJ will now
+# talk to the Production db: Postgresql, else if not found, in case of local mode, it will remain as it is, the default case.
+
+
+# MAIN LINE
+# DATABASES['default'].update(db_from_env)
+
+
+
+
+# FOR STORAGE, i.e. DATABASE AND ALSO FOR SERVING STATIC FILES.
+
+# This line enables features that help to enrich the files that whitenoise serves.
+# This is a very useful thing. It does three things:
+# 1. Compression: Before it sends the files as per request, it zips them, reducing the size by 80%.
+# 2. Caching: It send a note(header) back to browser saying, cache this file for this much period and
+# don't ask for it again till this time.
+# 3. Manifest: Since the browser won't ask for the file due to caching, what if 
+# the dev changes the code. Thus, Manifest names the files by particular names according to the code.
+# if the content changes, its hash changes and hence, browser is forced to request and download the new file.
+# django 4.2 and older version format
+
+
+# MAIN LINE
+# STATICFILE_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
+# This tells django to route all the media uploads on this website to Cloudinary.
+# Also, the use of cloudinary_storage can be seen below.
+# django 4.2 and older version format
+
+# MAIN LINE
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# The Modern Django 4.2+ Storage Dictionary
+
+
+# MAIN PART (UPDATED FOR NEWER VERSIONS OF DJANGO)
+# STORAGES = {
+#     # This handles your CSS/JS (The WhiteNoise Assistant)
+#     "staticfiles": {
+
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    
+#     },
+#     # This handles user uploads (The Cloudinary Warehouse)
+#     "default": {
+    
+#         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    
+#     },
+# }
+
+
+
+
+# ------------------------------------------------------------------------
+
+# THEN WE UPDATED THE LOGIC TO SWITCH BETWEEN DEBUG = TRUE OR FALSE
+# THUS, SWITCHING BETWEEN THE LOCAL SETUP AND THE CLOUD SETUP
+
+# ------------------------------------------------------------------------
+
+
+
+# ==========================================
+# THE MASTER ENVIRONMENT SWITCH
+# ==========================================
+
+if DEBUG:
+    # ---------------------------------------------------------
+    # TRACK A: LOCAL DEVELOPMENT (Your Mac)
+    # Triggered because your local .env file says DEBUG=True
+    # ---------------------------------------------------------
+    
+    # 1. Save data to the local file
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    
+    # 2. Save media and static files to the local Mac folders
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
+else:
+    # ---------------------------------------------------------
+    # TRACK B: PRODUCTION (Render Cloud)
+    # Triggered because Render's dashboard will say DEBUG=False
+    # ---------------------------------------------------------
+    
+    # 1. Save data to Neon PostgreSQL (Intercepts DATABASE_URL)
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600)
+    }
+    
+    # 2. Save media to Cloudinary, serve static files via WhiteNoise
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
