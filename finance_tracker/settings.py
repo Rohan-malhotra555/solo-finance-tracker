@@ -64,10 +64,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     # cloudinary storage (or django_cloudinary_storage) is used to make a 
     # setup in and tell django such that all of the media files will now go into cloudinary. 
     'cloudinary_storage', # the order matters
-    'django.contrib.staticfiles',
     # cloudinary is the actual doer. It performs the uploads, transformations....
     'cloudinary',
     'tracker',   # first created app in this project, so important to register here.
@@ -363,6 +363,6 @@ else:
     }
 
 
-    # THE BAND-AID: Give the outdated Cloudinary library what it wants
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Fallback variables for older third-party libraries
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
