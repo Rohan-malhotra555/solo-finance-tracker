@@ -1,7 +1,5 @@
 
 
-***
-
 ```markdown
 # Finance Tracker
 
@@ -74,4 +72,3 @@ This application is fully configured for automated deployment on Render. The pro
 *Developed by Rohan Malhotra*
 ```
 
-***
