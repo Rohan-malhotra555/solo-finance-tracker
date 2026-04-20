@@ -78,6 +78,11 @@ python manage.py runserver
 This application is fully configured for automated deployment on Render. The production server securely injects environment variables (`DEBUG=False`) to trigger the PostgreSQL and Cloudinary production track. Static files are compressed, cached, and served efficiently via WhiteNoise.
 
 ---
-*Developed by Rohan Malhotra*
-```
 
+## 👤 Author
+
+* **Rohan Malhotra**
+    * [LinkedIn](https://www.linkedin.com/in/rohan-malhotra-0b6327251/)
+    * [GitHub](https://github.com/Rohan-malhotra555)
+
+---
