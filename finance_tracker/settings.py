@@ -112,12 +112,12 @@ WSGI_APPLICATION = 'finance_tracker.wsgi.application'
 
 # Initially and in local development mode, DJ will consider the default database and in the 
 # start, it will initialize this only, i.e., db.sqlite3
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 
@@ -195,20 +195,20 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # The Modern Django 4.2+ Storage Dictionary
-STORAGES = {
-    # This handles your CSS/JS (The WhiteNoise Assistant)
-    "staticfiles": {
+# STORAGES = {
+#     # This handles your CSS/JS (The WhiteNoise Assistant)
+#     "staticfiles": {
 
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     
-    },
-    # This handles user uploads (The Cloudinary Warehouse)
-    "default": {
+#     },
+#     # This handles user uploads (The Cloudinary Warehouse)
+#     "default": {
     
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+#         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     
-    },
-}
+#     },
+# }
 
 
 
@@ -341,6 +341,10 @@ if DEBUG:
         },
     }
 
+    # 3. Legacy Fallbacks: Ensure old libraries also stay local
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
 else:
     # ---------------------------------------------------------
     # TRACK B: PRODUCTION (Render Cloud)
@@ -362,7 +366,6 @@ else:
         },
     }
 
-
-# Fallback variables for older third-party libraries
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Fallback variables for older third-party libraries
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
