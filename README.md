@@ -1,38 +1,47 @@
 
 
-```markdown
-# Finance Tracker
+# 📊 Finance Tracker
 
-A production-ready full-stack web application designed to track personal expenses, manage spending categories, and provide user-specific financial dashboards. 
+> A production-ready full-stack web application designed to track personal expenses, manage spending categories, and provide user-specific financial dashboards. 
+> Built with a robust, enterprise-grade architecture, this project features isolated development and production environments, secure media storage, and automated cloud deployment.
 
-Built with a robust, enterprise-grade architecture, this project features isolated development and production environments, secure media storage, and automated cloud deployment.
+---
 
-## 🚀 Features
+## 🚀 **Features**
+
 * **Custom Authentication:** Secure login, logout, and user session management utilizing a custom `TrackerUser` model.
 * **Expense Management:** Add, categorize, and track daily financial transactions.
 * **Dynamic Categories:** Database-driven category assignment for precise financial filtering.
 * **Media Management:** Secure upload and serving of user profile images and receipt attachments.
 * **Environment-Aware Architecture:** Automated routing between local (SQLite/Local Storage) and production (PostgreSQL/Cloudinary) environments based on environment variables.
 
-## 🛠️ Tech Stack
+---
+
+## 🛠️ **Tech Stack**
+
 * **Backend:** Python, Django 4.2+
 * **Database:** SQLite (Local) / PostgreSQL via Neon (Production)
 * **Storage:** Cloudinary (Media files) / WhiteNoise (Static files)
 * **Deployment & Hosting:** Render
 * **Version Control:** Git, GitHub
 
-## 🏗️ Architecture & Security
-This project employs a secure "Master Switch" configuration in `settings.py`. It guarantees that local testing never accidentally overwrites live production data:
-* **Track A (Development):** Utilizes a local SQLite database and local file system storage.
-* **Track B (Production):** Automatically routes database connections to a remote Neon PostgreSQL cluster and delegates media storage to the Cloudinary API.
+---
 
-## 💻 Local Setup & Installation
+## 🏗️ **Architecture & Security**
+
+This project employs a secure **"Master Switch"** configuration in `settings.py`. It guarantees that local testing never accidentally overwrites live production data:
+
+* 🛡️ **Track A (Development):** Utilizes a local SQLite database and local file system storage.
+* ☁️ **Track B (Production):** Automatically routes database connections to a remote Neon PostgreSQL cluster and delegates media storage to the Cloudinary API.
+
+---
+
+## 💻 **Local Setup & Installation**
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/Rohan-malhotra555/solo-finance-tracker.git
-cd finance-tracker
-```
+git clone [https://github.com/Rohan-malhotra555/solo-finance-tracker.git](https://github.com/Rohan-malhotra555/solo-finance-tracker.git)
+cd solo-finance-tracker
 
 **2. Create and activate a virtual environment**
 ```bash
