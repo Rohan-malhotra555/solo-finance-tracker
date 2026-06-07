@@ -7,6 +7,9 @@
 
 ---
 
+<img width="1470" height="798" alt="image" src="https://github.com/user-attachments/assets/b6a660d8-39b1-4d2f-85af-78ceff43ac9e" />
+
+
 ## 🚀 **Features**
 
 * **Custom Authentication:** Secure login, logout, and user session management utilizing a custom `TrackerUser` model.
