@@ -6,6 +6,7 @@
 > Built with a robust, enterprise-grade architecture, this project features isolated development and production environments, secure media storage, and automated cloud deployment.
 
 ---
+📸 Project Screenshot
 
 <img width="1470" height="798" alt="image" src="https://github.com/user-attachments/assets/b6a660d8-39b1-4d2f-85af-78ceff43ac9e" />
 
@@ -86,6 +87,5 @@ This application is fully configured for automated deployment on Render. The pro
 
 * **Rohan Malhotra**
     * [LinkedIn](https://www.linkedin.com/in/rohan-malhotra-0b6327251/)
-    * [GitHub](https://github.com/Rohan-malhotra555)
 
 ---
